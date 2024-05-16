@@ -1,0 +1,59 @@
+[gd_scene load_steps=4 format=3 uid="uid://q08otpcqkq7g"]
+
+[ext_resource type="Script" path="res://addons/signal_manager/scripts/main_screen/Button.gd" id="1_r5jpc"]
+[ext_resource type="Script" path="res://addons/signal_manager/scripts/main_screen/OptionButton.gd" id="2_ldorw"]
+[ext_resource type="Script" path="res://addons/signal_manager/scenes/Button2.gd" id="3_kop4w"]
+
+[node name="Managed Signals" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_right = 72.0
+offset_bottom = 41.0
+text = "Copy code to clipboard"
+script = ExtResource("1_r5jpc")
+
+[node name="TextEdit" type="TextEdit" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 89.0
+offset_right = 284.0
+offset_bottom = 131.0
+
+[node name="OptionButton" type="OptionButton" parent="."]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 45.0
+offset_right = 279.0
+offset_bottom = 82.0
+item_count = 5
+selected = 0
+popup/item_0/text = "1"
+popup/item_0/id = 0
+popup/item_1/text = "15615"
+popup/item_1/id = 1
+popup/item_2/text = "AGWEGA"
+popup/item_2/id = 2
+popup/item_3/text = "AsFaSfFaSf"
+popup/item_3/id = 3
+popup/item_4/text = "asssds"
+popup/item_4/id = 4
+script = ExtResource("2_ldorw")
+
+[node name="ShowProjectSettings" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 9.0
+offset_top = 145.0
+offset_right = 119.0
+offset_bottom = 184.0
+text = "Project Settings...."
+script = ExtResource("3_kop4w")
+
+[connection signal="pressed" from="ShowProjectSettings" to="ShowProjectSettings" method="_show_project_settings"]

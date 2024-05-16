@@ -1,0 +1,8 @@
+# Godot 4+ specific ignores
+.godot/
+addons/zylann.editor_debugger/dock.gd
+addons/zylann.editor_debugger/dock.tscn
+addons/zylann.editor_debugger/LICENSE.md
+addons/zylann.editor_debugger/plugin.cfg
+addons/zylann.editor_debugger/plugin.gd
+addons/zylann.editor_debugger/util.gd

@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://bv0ja3uhv8j4e"]
+
+[node name="MarginContainer" type="MarginContainer"]
+offset_right = 352.0
+offset_bottom = 31.0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="LineItem" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Warning" type="Button" parent="LineItem"]
+unique_name_in_owner = true
+visible = false
+self_modulate = Color(0.876016, 0.844339, 0.328465, 1)
+layout_mode = 2
+text = "!"
+
+[node name="SignalName" type="LineEdit" parent="LineItem"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(264, 31)
+layout_mode = 2
+theme_override_colors/font_placeholder_color = Color(0.427493, 0.427493, 0.427493, 1)
+placeholder_text = "thing_changed_signal_name"
+
+[node name="OptionButton" type="OptionButton" parent="LineItem"]
+layout_mode = 2
+
+[node name="Remove" type="Button" parent="LineItem"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "X"

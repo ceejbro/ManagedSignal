@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="GlobalSignalList" load_steps=2 format=3 uid="uid://bvdtv1d54mqwf"]
+
+[ext_resource type="Script" path="res://addons/signal_manager/scripts/resource_definitions/global_signal_list.gd" id="1_1upig"]
+
+[resource]
+script = ExtResource("1_1upig")
+global_signals = ["1", "15615", "agwega", "as_fa_sf_fa_sf", "asfaewfa", "asssds", "x"]
