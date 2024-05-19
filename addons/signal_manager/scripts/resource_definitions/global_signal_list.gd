@@ -8,9 +8,9 @@ func remove_item(signal_name: String) -> void:
 	global_signals.erase(signal_name)
 	notify_property_list_changed()
 
-func clean(case: String) -> void:
+func clean(case: GlobalUtil.CaseConversions) -> void:
 	global_signals = global_signals.filter(func(a): return not a.is_empty())
-	global_signals = global_signals.map(func(a): return convert_case(a, case))
+	global_signals = global_signals.map(func(a): return GlobalUtil.convert_case(a, case))
 	global_signals = _get_unique_elements(global_signals)
 	global_signals.sort_custom(func(a,b): return a.naturalnocasecmp_to(b) < 0)
 
@@ -27,23 +27,3 @@ func _get_unique_elements(passed_array: Array) -> Array:
 		item_index += 1
 	temparray = temparray.filter(func(element): return true if not element.is_empty() else false)
 	return temparray
-
-func convert_case(from: String, case: String) -> String:
-	var to: String
-	match case:
-			"to_lower":
-				to = from.to_lower()
-			"to_upper":
-				to = from.to_upper()
-			"to_snake_case":
-				to = from.to_snake_case()
-			"to_camel_case":
-				to = from.to_camel_case()
-			"to_pascal_case":
-				to = from.to_pascal_case()
-			"no_conversion":
-				to = from
-			_:
-				printerr("plugins/managed_signals/convert_case set but value not matched. Making no changes")
-				to = from
-	return to

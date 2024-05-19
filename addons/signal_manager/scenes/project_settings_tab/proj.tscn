@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b0xshtfbleaq4"]
+[gd_scene load_steps=3 format=3 uid="uid://b0xshtfbleaq4"]
 
-[ext_resource type="Script" path="res://List.gd" id="1_r0lt3"]
+[ext_resource type="Script" path="res://addons/signal_manager/scenes/project_settings_tab/List.gd" id="1_2igud"]
+[ext_resource type="Script" path="res://addons/global_utilities/gui_building_blocks/line_item.gd" id="2_huo27"]
 
 [node name="Managed Signals" type="Control"]
 layout_mode = 3
@@ -49,12 +50,14 @@ size_flags_vertical = 3
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/MarginContainer/VBoxContainer/ScrollContainer"]
 layout_mode = 2
 theme_override_constants/separation = 3
-script = ExtResource("1_r0lt3")
+script = ExtResource("1_2igud")
+
+[node name="LineItem" type="MarginContainer" parent="HBoxContainer/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("2_huo27")
 
 [node name="ScrollContainer2" type="ScrollContainer" parent="HBoxContainer"]
 layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/ScrollContainer2"]
 layout_mode = 2
-
-[connection signal="pressed" from="HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/Refresh" to="HBoxContainer/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" method="_visibility_changed" binds= [true]]

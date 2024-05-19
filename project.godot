@@ -19,11 +19,7 @@ SignalManager="*res://addons/signal_manager/scripts/signal_manager.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/signal_manager/plugin.cfg", "res://addons/zylann.editor_debugger/plugin.cfg")
-
-[plugins]
-
-managed_signals/debug=true
+enabled=PackedStringArray("res://addons/global_utilities/plugin.cfg", "res://addons/signal_manager/plugin.cfg")
 
 [rendering]
 

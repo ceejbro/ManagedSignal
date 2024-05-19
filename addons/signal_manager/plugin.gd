@@ -1,6 +1,5 @@
 @tool
 extends EditorPlugin
-class_name EditorPluginManagedSignals
 
 var panel_scene
 var project_scene
@@ -20,9 +19,9 @@ var settings: Dictionary = {
 				"name": "plugins/managed_signals/convert_case",
 				"type": TYPE_STRING,
 				"hint": PROPERTY_HINT_ENUM,
-				"hint_string": "no_conversion,to_lower,to_upper,to_snake_case (GDScript Style),to_camel_case,to_pascal_case",
+				"hint_string": "NO_CONVERSION,TO_LOWER,TO_UPPER,TO_SNAKE_CASE (GDScript Style),TO_CAMEL_CASE,TO_PASCAL_CASE",
 			},
-			"initial_value": "to_snake_case (GDScript Style)",
+			"initial_value": "TO_SNAKE_CASE (GDScript Style)",
 			"internal": false,
 			"basic": true,
 			"restart_if_changed": false,
@@ -59,12 +58,22 @@ var settings: Dictionary = {
 			"basic": false,
 			"restart_if_changed": false,
 		},
-		"plugins/managed_signals/allowed_chars" : {
+		"plugins/managed_signals/allowed_first_char" : {
 			"property_info" : {
-				"name": "plugins/managed_signals/allowed_chars",
+				"name": "plugins/managed_signals/allowed_first_char",
 				"type": TYPE_STRING,
 			},
-			"initial_value": "",
+			"initial_value": r'[a-zA-Z]*',
+			"internal": false,
+			"basic": false,
+			"restart_if_changed": true,
+		},
+		"plugins/managed_signals/chars_to_filter_out" : {
+			"property_info" : {
+				"name": "plugins/managed_signals/chars_to_filter_out",
+				"type": TYPE_STRING,
+			},
+			"initial_value": r'[^a-zA-Z0-9_]*',
 			"internal": false,
 			"basic": false,
 			"restart_if_changed": true,
@@ -72,8 +81,8 @@ var settings: Dictionary = {
 	}
 
 func _enter_tree():
-	panel_scene = load("res://addons/signal_manager/scenes/control.tscn").instantiate()
-	project_scene = load("res://proj.tscn").instantiate()
+	panel_scene = load("res://addons/signal_manager/scenes/dock_lower_left/control.tscn").instantiate()
+	project_scene = load("res://addons/signal_manager/scenes/project_settings_tab/proj.tscn").instantiate()
 
 	for setting in settings.keys():
 		if not ProjectSettings.has_setting(setting):

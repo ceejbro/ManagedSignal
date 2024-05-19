@@ -6,12 +6,12 @@ signal list_sorted
 signal item_added(item: String)
 signal item_changed(from: String, to: String)
 signal item_removed(item: String)
-
+signal text_rejected(rejected_text: String)
 
 @onready var scene_root: Control = owner
 
 var project_settings_window
-var line_item: PackedScene = load("res://line_item.tscn")
+#var line_item: PackedScene = load("res://addons/gui_building_blocks/scenes/line_item.tscn")
 var primary_list: GlobalSignalList = load("res://addons/signal_manager/resources/primary_global_signal_list.tres")
 
 @onready var _refresh_loop_timer = Timer.new()
@@ -25,6 +25,7 @@ var _sort_requested: bool = false
 var _sort_dirty: bool = false
 var _cached_convert_case
 var _end_of_list_blank: Node
+var _regex = RegEx.new()
 
 var _refresh_loop_started: bool = false
 var _refresh_loop_should_run: bool = true
@@ -54,15 +55,19 @@ func _ready() -> void:
 		item_added.connect(func(_a=null): print("Added: ", _a,))
 		item_changed.connect(func(_a=null, _b=null): print("Changed from: ", _a, " to: ", _b))
 		item_removed.connect(func(_a=null): print("Removed: ", _a))
+		text_rejected.connect(func(a=null): print("Rejected '", a, "'"))
 
 	if ProjectSettings.get_setting("plugins/managed_signals/automatic_refresh", true):
 		delay_ms = ProjectSettings.get_setting("plugins/managed_signals/refresh_delay_milliseconds", 1000)
 	else:
 		delay_ms = -1
 
-	_cached_convert_case = ProjectSettings.get_setting("plugins/managed_signals/convert_case", null)
+	_cached_convert_case = ProjectSettings.get_setting("plugins/managed_signals/convert_case", GlobalUtil.CaseConversions.NO_CONVERSION)
 	if _cached_convert_case:
-		_cached_convert_case = _cached_convert_case.get_slice(" ", 0)
+		_cached_convert_case = GlobalUtil.CaseConversions[_cached_convert_case.get_slice(" ", 0)]
+
+
+	_regex.compile(ProjectSettings.get_setting("plugins/managed_signals/allowed_chars", r'^[a-zA-Z][a-zA-Z0-9_]*'))
 
 	owner.add_child.call_deferred(_refresh_loop_timer)
 	await _refresh_loop_timer.ready
@@ -94,23 +99,26 @@ func setup_list() -> void:
 	_end_of_list_blank = add_item("")
 
 func add_item(item: String) -> Node:
-	var _modify = line_item.instantiate()
-	_modify.get_node("%SignalName").text = primary_list.convert_case(item, _cached_convert_case)
-	_modify.get_node("%SignalName").text_changed.connect(Callable(self, "_item_text_changed").bind(_modify))
-	_modify.get_node("%SignalName").text_submitted.connect(Callable(self, "_item_text_changed").bind(_modify))
-	_modify.get_node("%SignalName").owner = _modify
-	_modify.get_node("%Remove").disabled = false
-	_modify.get_node("%Remove").pressed.connect(Callable(self, "remove_item").bind(_modify))
+	var _modify = LineItem.new()
+	_modify.first_char_regex_string = r'[a-zA-Z]*'
+	_modify.disallowed_chars_regex_string = r'[^a-zA-Z0-9_]*'
+	_modify.last_char_regex_string = r'[^a-zA-Z0-9]'
+	_modify.TextBox.text = GlobalUtil.convert_case(item, _cached_convert_case)
+	_modify.TextBox.text_changed.connect(Callable(self, "_item_text_changed").bind(_modify))
+	_modify.TextBox.text_submitted.connect(Callable(self, "_item_text_changed").bind(_modify))
+	_modify.TextBox.owner = _modify
+	#_modify.Remove.disabled = false
+	_modify.Remove.pressed.connect(Callable(self, "remove_item").bind(_modify))
 	add_child(_modify)
-	_cached_text[_modify] = primary_list.convert_case(item, _cached_convert_case)
+	_cached_text[_modify] = GlobalUtil.convert_case(item, _cached_convert_case)
 	if not item.is_empty():
-		item_added.emit(primary_list.convert_case(item, _cached_convert_case))
+		item_added.emit(GlobalUtil.convert_case(item, _cached_convert_case))
 	else:
-		_modify.get_node("%Remove").disabled = true
+		_modify.Remove.disabled = true
 	return _modify
 
 func remove_item(item: Node) -> void:
-	var item_text = item.get_node("%SignalName").text
+	var item_text = item.TextBox.text
 	primary_list.remove_item(item_text)
 	_item_text_changed("", item)
 	_cached_text.erase(item)
@@ -118,6 +126,7 @@ func remove_item(item: Node) -> void:
 	item_removed.emit(item_text)
 
 func _item_text_changed(new_text: String, source: Node) -> void:
+	#!!!!check if change should be rejected first
 	if source == _end_of_list_blank:
 		if is_equal_approx(delay_ms, -1):
 			_end_of_list_blank = add_item("")
@@ -129,17 +138,33 @@ func _item_text_changed(new_text: String, source: Node) -> void:
 			"to": null,
 		}
 	if not new_text.is_empty():
-		source.get_node("%Remove").disabled = false
+		source.Remove.disabled = false
 	if _cached_convert_case:
 		#Note: Setting the text property does not emit the text_changed signal.
 		# But it does break caret position. Needs to be reset to orignal position after text replacement.
-		var caret_position = source.get_node("%SignalName").caret_column
+		var caret_position = source.TextBox.caret_column
 		var converted_text = primary_list.convert_case(new_text, _cached_convert_case)
+		var cleaned_string = _keep_allowed_chars(converted_text)
 		_pending_changes[source].to = converted_text
-		source.get_node("%SignalName").text = converted_text
-		source.get_node("%SignalName").caret_column = caret_position
+		source.TextBox.text = converted_text
+		source.TextBox.caret_column = caret_position
 	else:
 		_pending_changes[source].to = new_text
+
+func _keep_allowed_chars(input: String) -> String:
+	var output: String
+	var results = _regex.search(input)
+	if results.subject.is_empty():
+		return ""
+	if results.get_end() == -1:
+		text_rejected.emit(results.subject)
+		return ""
+	if results.subject != results.get_string():
+		text_rejected.emit(results.subject.right(-results.get_end()))
+		output = results.get_string()
+	else:
+		output = input
+	return output
 
 func _update() -> void:
 	if _new_item_needed:
@@ -173,7 +198,7 @@ func _check_for_duplicates() -> Array[int]:
 	_duplicates.resize(get_child_count())
 	_duplicates.fill(0)
 	for item in get_children():
-		var item_index = primary_list.global_signals.find(item.get_node("%SignalName").text)
+		var item_index = primary_list.global_signals.find(item.TextBox.text)
 		_duplicates[item_index] += 1
 	return _duplicates.duplicate()
 
@@ -188,7 +213,7 @@ func _sort() -> void:
 	primary_list.clean(_cached_convert_case)
 	var _duplicates = _check_for_duplicates()
 	for item in get_children():
-		var item_index = primary_list.global_signals.find(item.get_node("%SignalName").text)
+		var item_index = primary_list.global_signals.find(item.TextBox.text)
 		if item_index == -1:
 			item.queue_free()
 		elif _duplicates[item_index] != 1:
@@ -239,4 +264,3 @@ func _refresh() -> void:
 		_sort_requested = true
 		_update()
 		_refresh_loop_started = false
-

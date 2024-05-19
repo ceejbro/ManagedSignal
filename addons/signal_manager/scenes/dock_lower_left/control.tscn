@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://q08otpcqkq7g"]
 
-[ext_resource type="Script" path="res://addons/signal_manager/scripts/main_screen/Button.gd" id="1_r5jpc"]
-[ext_resource type="Script" path="res://addons/signal_manager/scripts/main_screen/OptionButton.gd" id="2_ldorw"]
-[ext_resource type="Script" path="res://addons/signal_manager/scenes/Button2.gd" id="3_kop4w"]
+[ext_resource type="Script" path="res://addons/signal_manager/scenes/dock_lower_left/Button.gd" id="1_emhma"]
+[ext_resource type="Script" path="res://addons/signal_manager/scenes/dock_lower_left/OptionButton.gd" id="2_brqrq"]
+[ext_resource type="Script" path="res://addons/signal_manager/scenes/dock_lower_left/Button2.gd" id="3_8x1sa"]
 
 [node name="Managed Signals" type="Control"]
 layout_mode = 3
@@ -17,7 +17,7 @@ layout_mode = 0
 offset_right = 72.0
 offset_bottom = 41.0
 text = "Copy code to clipboard"
-script = ExtResource("1_r5jpc")
+script = ExtResource("1_emhma")
 
 [node name="TextEdit" type="TextEdit" parent="."]
 layout_mode = 0
@@ -32,19 +32,23 @@ offset_left = 13.0
 offset_top = 45.0
 offset_right = 279.0
 offset_bottom = 82.0
-item_count = 5
+item_count = 7
 selected = 0
 popup/item_0/text = "1"
 popup/item_0/id = 0
 popup/item_1/text = "15615"
 popup/item_1/id = 1
-popup/item_2/text = "AGWEGA"
+popup/item_2/text = "agwega"
 popup/item_2/id = 2
-popup/item_3/text = "AsFaSfFaSf"
+popup/item_3/text = "as_fa_sf_fa_sf"
 popup/item_3/id = 3
-popup/item_4/text = "asssds"
+popup/item_4/text = "asfaewfa"
 popup/item_4/id = 4
-script = ExtResource("2_ldorw")
+popup/item_5/text = "asssds"
+popup/item_5/id = 5
+popup/item_6/text = "x"
+popup/item_6/id = 6
+script = ExtResource("2_brqrq")
 
 [node name="ShowProjectSettings" type="Button" parent="."]
 unique_name_in_owner = true
@@ -54,6 +58,6 @@ offset_top = 145.0
 offset_right = 119.0
 offset_bottom = 184.0
 text = "Project Settings...."
-script = ExtResource("3_kop4w")
+script = ExtResource("3_8x1sa")
 
 [connection signal="pressed" from="ShowProjectSettings" to="ShowProjectSettings" method="_show_project_settings"]
