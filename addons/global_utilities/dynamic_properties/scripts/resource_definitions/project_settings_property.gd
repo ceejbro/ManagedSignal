@@ -25,7 +25,7 @@ class_name ProjectSettingsProperty
 			_initial_value_visible = false
 			_class_name_visible = false
 			notify_property_list_changed()
-##test
+			
 @export var hint: PropertyHint
 @export var hint_string: String
 
@@ -60,9 +60,7 @@ var _exposed_properties: Dictionary = {
 }
 
 func _get(property: StringName) -> Variant:
-	if _exposed_properties.has(property):
-		return _exposed_properties[property].value
-	return null
+	return DynamicPropertiesHelper.helper_get(property, _exposed_properties)
 
 func _set(property: StringName, value: Variant) -> bool:
 	if property == "class_name":

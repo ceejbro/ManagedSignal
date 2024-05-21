@@ -81,7 +81,7 @@ var settings: Dictionary = {
 	}
 
 func _enter_tree():
-	panel_scene = load("res://addons/signal_manager/scenes/dock_lower_left/control.tscn").instantiate()
+	panel_scene = load("res://addons/signal_manager/scenes/dock_right_bl/control.tscn").instantiate()
 	project_scene = load("res://addons/signal_manager/scenes/project_settings_tab/proj.tscn").instantiate()
 
 	for setting in settings.keys():
